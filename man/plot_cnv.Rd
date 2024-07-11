@@ -10,6 +10,7 @@ plot_cnv(
   title = "inferCNV",
   obs_title = "Observations (Cells)",
   ref_title = "References (Cells)",
+  custom_colors = NULL,
   cluster_by_groups = TRUE,
   cluster_references = TRUE,
   plot_chr_scale = FALSE,
@@ -18,7 +19,7 @@ plot_cnv(
   contig_cex = 1,
   x.center = mean(infercnv_obj@expr.data),
   x.range = "auto",
-  hclust_method = "ward.D",
+  hclust_method = "ward.D2",
   custom_color_pal = NULL,
   color_safe_pal = FALSE,
   output_filename = "infercnv",
@@ -41,6 +42,8 @@ plot_cnv(
 \item{obs_title}{Title for the observations matrix.}
 
 \item{ref_title}{Title for the reference matrix.}
+
+\item{custom_colors}{Vector of custom colors to use for the heatmap.}
 
 \item{cluster_by_groups}{Whether to cluster observations by their annotations or not. Using this ignores k_obs_groups.}
 
@@ -119,7 +122,7 @@ plot_cnv(infercnv_object_example,
          cluster_by_groups=TRUE,
          x.center=1,
          x.range="auto",
-         hclust_method='ward.D',
+         hclust_method='ward.D2',
          color_safe_pal=FALSE,
          output_filename="infercnv",
          output_format="png",

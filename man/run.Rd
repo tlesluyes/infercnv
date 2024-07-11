@@ -17,6 +17,7 @@ run(
   cluster_references = TRUE,
   k_obs_groups = 1,
   hclust_method = "ward.D2",
+  dist_metrics = "euclidean",
   max_centered_threshold = 3,
   scale_data = FALSE,
   HMM = FALSE,
@@ -119,6 +120,8 @@ of cells will be clustered separately. (default=FALSE, instead will use k_obs_gr
 \item{hclust_method}{Method used for hierarchical clustering of cells. Valid choices are:
 "ward.D", "ward.D2", "single", "complete", "average", "mcquitty", "median", "centroid".
 default("ward.D2")}
+
+\item{dist_metrics}{Distance metrics used for hierarchical clustering of cells.}
 
 \item{max_centered_threshold}{The maximum value a value can have after
     centering. Also sets a lower bound of
