@@ -19,6 +19,7 @@ get_group_color_palette <- function(){
 #' @param title Plot title.
 #' @param obs_title Title for the observations matrix.
 #' @param ref_title Title for the reference matrix.
+#' @param custom_colors Vector of custom colors to use for the heatmap.
 #' @param cluster_by_groups Whether to cluster observations by their annotations or not. Using this ignores k_obs_groups.
 #' @param cluster_references Whether to cluster references within their annotations or not. (dendrogram not displayed)
 #' @param plot_chr_scale Whether to scale the chromosme width on the heatmap based on their actual size rather than just the number of expressed genes.
@@ -92,6 +93,7 @@ plot_cnv <- function(infercnv_obj,
                      title="inferCNV",
                      obs_title="Observations (Cells)",
                      ref_title="References (Cells)",
+                     custom_colors=NULL,
                      cluster_by_groups=TRUE,
                      cluster_references=TRUE,
                      plot_chr_scale=FALSE,
@@ -413,6 +415,7 @@ plot_cnv <- function(infercnv_obj,
                           contig_labels=contig_labels,
                           contig_names=contig_names,
                           col_pal=custom_pal,
+                          custom_colors=custom_colors,
                           contig_seps=col_sep,
                           num_obs_groups=k_obs_groups,
                           obs_annotations_groups=obs_annotations_groups,
@@ -475,6 +478,7 @@ plot_cnv <- function(infercnv_obj,
 # Args:
 #' @param obs_data Data to plot as observations. Rows = Cells, Col = Genes.
 #' @param col_pal The color palette to use.
+#' @param custom_colors The custom colors to use.
 #' @param contig_colors The colors for the contig bar.
 #' @param contig_labels The labels for the contigs.
 #' @param contig_names Names of the contigs.
@@ -506,6 +510,7 @@ plot_cnv <- function(infercnv_obj,
 .plot_cnv_observations <- function(infercnv_obj,
                                   obs_data,
                                   col_pal,
+                                  custom_colors,
                                   contig_colors,
                                   contig_labels,
                                   contig_names,
@@ -815,6 +820,11 @@ plot_cnv <- function(infercnv_obj,
     row_groupings <- get_group_color_palette()(length(table(split_groups_as_idx)))[split_groups_as_idx]
     row_groupings <- cbind(row_groupings, get_group_color_palette()(length(table(hcl_obs_annotations_groups)))[hcl_obs_annotations_groups])
     annotations_legend <- cbind(obs_annotations_names, get_group_color_palette()(length(table(hcl_obs_annotations_groups))))
+
+    if (!is.null(custom_colors)) {
+        stopifnot(all(names(infercnv_obj@observation_grouped_cell_indices) %in% names(custom_colors)))
+        row_groupings[,2]=custom_colors[names(infercnv_obj@observation_grouped_cell_indices)[hcl_obs_annotations_groups]]
+    }
 
     # Make a file of coloring and groupings
     flog.info("plot_cnv_observation:Writing observation groupings/color.")
