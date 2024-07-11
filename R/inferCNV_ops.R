@@ -43,6 +43,8 @@
 #' @param hclust_method Method used for hierarchical clustering of cells. Valid choices are:
 #' "ward.D", "ward.D2", "single", "complete", "average", "mcquitty", "median", "centroid".
 #' default("ward.D2")
+#' 
+#' @param dist_metrics Distance metrics used for hierarchical clustering of cells.
 #'
 #' @param max_centered_threshold The maximum value a value can have after
 #'                                   centering. Also sets a lower bound of
@@ -260,6 +262,7 @@ run <- function(infercnv_obj,
                 k_obs_groups=1,
 
                 hclust_method='ward.D2',
+                dist_metrics='euclidean',
 
                 max_centered_threshold=3, # or set to a specific value or "auto", or NA to turn off
                 scale_data=FALSE,
@@ -385,6 +388,8 @@ run <- function(infercnv_obj,
     
     flog.info(paste("::process_data:Start", sep=""))
     
+    infercnv.env$dist_metrics=dist_metrics
+
     infercnv.env$GLOBAL_NUM_THREADS <- num_threads
     if (is.null(out_dir)) {
         flog.error("Error, out_dir is NULL, please provide a path.")
@@ -408,6 +413,7 @@ run <- function(infercnv_obj,
     call_match$analysis_mode = analysis_mode
     call_match$tumor_subcluster_partition_method = tumor_subcluster_partition_method
     call_match$hclust_method = hclust_method
+    call_match$dist_metrics = dist_metrics
     call_match$leiden_function = leiden_function
     # add argument needed to get relevant args list
     call_match$HMM = HMM
@@ -1927,7 +1933,7 @@ split_references <- function(infercnv_obj,
 
     ref_expr_matrix = infercnv_obj@expr.data[ , get_reference_grouped_cell_indices(infercnv_obj) ]
     
-    hc <- hclust(parallelDist(t(ref_expr_matrix), threads=infercnv.env$GLOBAL_NUM_THREADS), method=hclust_method)
+    hc <- hclust(parallelDist(t(ref_expr_matrix), threads=infercnv.env$GLOBAL_NUM_THREADS, method=infercnv.env$dist_metrics), method=hclust_method)
     
     split_groups <- cutree(hc, k=num_groups)
     
@@ -3239,7 +3245,7 @@ cross_cell_normalize <- function(infercnv_obj) {
         
         grp_expr_data = infercnv_obj@expr.data[, grp_cell_idx, drop=FALSE]
         
-        hc <- hclust(parallelDist(t(grp_expr_data), threads=infercnv.env$GLOBAL_NUM_THREADS), method=hclust_method)
+        hc <- hclust(parallelDist(t(grp_expr_data), threads=infercnv.env$GLOBAL_NUM_THREADS, method=infercnv.env$dist_metrics), method=hclust_method)
 
         infercnv_obj@tumor_subclusters$hc[[grp_name]] <- hc
     }

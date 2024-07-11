@@ -188,7 +188,7 @@ define_signif_tumor_subclusters <- function(infercnv_obj,
     
     if (ncol(tumor_expr_data) > 2) {
 
-        hc <- hclust(parallelDist(t(tumor_expr_data), threads=infercnv.env$GLOBAL_NUM_THREADS), method=hclust_method)
+        hc <- hclust(parallelDist(t(tumor_expr_data), threads=infercnv.env$GLOBAL_NUM_THREADS, method=infercnv.env$dist_metrics), method=hclust_method)
         
         tumor_subcluster_info$hc = hc
         
@@ -408,7 +408,7 @@ plot_subclusters = function(infercnv_obj, out_dir, output_filename = "subcluster
         stop("Error, found too many names in current clade")
     }
     
-    hc <- hclust(parallelDist(t(tumor_expr_data), threads=infercnv.env$GLOBAL_NUM_THREADS), method=hclust_method)
+    hc <- hclust(parallelDist(t(tumor_expr_data), threads=infercnv.env$GLOBAL_NUM_THREADS, method=infercnv.env$dist_metrics), method=hclust_method)
 
     rand_params_info = .parameterize_random_cluster_heights(tumor_expr_data, hclust_method)
 
@@ -469,7 +469,7 @@ plot_subclusters = function(infercnv_obj, out_dir, output_filename = "subcluster
     ## inspired by: https://www.frontiersin.org/articles/10.3389/fgene.2016.00144/full
 
     t_tumor.expr.data = t(expr_matrix) # cells as rows, genes as cols
-    d = parallelDist(t_tumor.expr.data, threads=infercnv.env$GLOBAL_NUM_THREADS)
+    d = parallelDist(t_tumor.expr.data, threads=infercnv.env$GLOBAL_NUM_THREADS, method=infercnv.env$dist_metrics)
 
     h_obs = hclust(d, method=hclust_method)
 
@@ -494,7 +494,7 @@ plot_subclusters = function(infercnv_obj, out_dir, output_filename = "subcluster
         #message(sprintf("iter i:%d", i))
         rand.tumor.expr.data = permute_col_vals(t_tumor.expr.data)
         
-        rand.dist = parallelDist(rand.tumor.expr.data, threads=infercnv.env$GLOBAL_NUM_THREADS)
+        rand.dist = parallelDist(rand.tumor.expr.data, threads=infercnv.env$GLOBAL_NUM_THREADS, method=infercnv.env$dist_metrics)
         h_rand <- hclust(rand.dist, method=hclust_method)
         h_rand_ex = h_rand
         max_rand_heights = c(max_rand_heights, max(h_rand$height))
@@ -579,7 +579,7 @@ plot_subclusters = function(infercnv_obj, out_dir, output_filename = "subcluster
     if (k_nn >= length(tumor_group_idx)) {
         flog.info(paste0("Less cells in group ", tumor_group, " than k_nn setting. Keeping as a single subcluster."))
         res$subclusters[[ tumor_group ]] = tumor_group_idx
-        res$hc = hclust(parallelDist(t(tumor_expr_data), threads=infercnv.env$GLOBAL_NUM_THREADS), method=hclust_method)
+        res$hc = hclust(parallelDist(t(tumor_expr_data), threads=infercnv.env$GLOBAL_NUM_THREADS, method=infercnv.env$dist_metrics), method=hclust_method)
         return(res)
     }
 
@@ -606,7 +606,7 @@ plot_subclusters = function(infercnv_obj, out_dir, output_filename = "subcluster
         # names(res$subclusters[[ paste(tumor_group, i, sep="_s") ]]) = tumor_group_idx[which(partition == i)]
 
         if (length(which(partition == i)) >= 2) {
-            tmp_phylo = as.phylo(hclust(parallelDist(t(tumor_expr_data[, which(partition == i), drop=FALSE]), threads=infercnv.env$GLOBAL_NUM_THREADS), method=hclust_method))
+            tmp_phylo = as.phylo(hclust(parallelDist(t(tumor_expr_data[, which(partition == i), drop=FALSE]), threads=infercnv.env$GLOBAL_NUM_THREADS, method=infercnv.env$dist_metrics), method=hclust_method))
 
             if (is.null(tmp_full_phylo)) {
                 tmp_full_phylo = tmp_phylo
