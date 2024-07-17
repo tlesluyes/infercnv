@@ -822,8 +822,21 @@ plot_cnv <- function(infercnv_obj,
     annotations_legend <- cbind(obs_annotations_names, get_group_color_palette()(length(table(hcl_obs_annotations_groups))))
 
     if (!is.null(custom_colors)) {
-        stopifnot(all(names(infercnv_obj@observation_grouped_cell_indices) %in% names(custom_colors)))
-        row_groupings[,2]=custom_colors[names(infercnv_obj@observation_grouped_cell_indices)[hcl_obs_annotations_groups]]
+        if (all(names(infercnv_obj@observation_grouped_cell_indices) %in% names(custom_colors))) {
+            row_groupings[,2]=custom_colors[names(infercnv_obj@observation_grouped_cell_indices)[hcl_obs_annotations_groups]]
+            if (all(as.character(annotations_legend[,1]) %in% names(custom_colors))) {
+                annotations_legend[,2]=custom_colors[as.character(annotations_legend[,1])]
+            } else {
+                print(custom_colors)
+                print(annotations_legend)
+                save(row_groupings, annotations_legend, custom_colors, infercnv_obj, file="debug.Rdata")
+                stop("Error with annotations_legend")
+            }
+        } else {
+            print(custom_colors)
+            print(table(names(infercnv_obj@observation_grouped_cell_indices)))
+            stop("Error with infercnv_obj@observation_grouped_cell_indices")
+        }
     }
 
     # Make a file of coloring and groupings

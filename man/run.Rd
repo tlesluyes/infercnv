@@ -18,6 +18,7 @@ run(
   k_obs_groups = 1,
   hclust_method = "ward.D2",
   dist_metrics = "euclidean",
+  custom_colors = NULL,
   max_centered_threshold = 3,
   scale_data = FALSE,
   HMM = FALSE,
@@ -122,6 +123,8 @@ of cells will be clustered separately. (default=FALSE, instead will use k_obs_gr
 default("ward.D2")}
 
 \item{dist_metrics}{Distance metrics used for hierarchical clustering of cells.}
+
+\item{custom_colors}{Custom colors for the cells. (default: NULL)}
 
 \item{max_centered_threshold}{The maximum value a value can have after
     centering. Also sets a lower bound of
