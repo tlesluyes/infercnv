@@ -43,6 +43,7 @@ get_group_color_palette <- function(){
 #' @param ref_contig If given, will focus cluster on only genes in this contig.
 #' @param write_expr_matrix Includes writing a matrix file containing the expression data that is plotted in the heatmap.
 #' @param write_phylo Write newick strings of the dendrograms displayed on the left side of the heatmap to file.
+#' @param write_members Write the 'members' files.
 #' @param useRaster Whether to use rasterization for drawing heatmap. Only disable if it produces an error as it is much faster than not using it.
 #' 
 #' @return A list of all relevent settings used for the plotting to be able to reuse them in another plot call while keeping consistant plotting settings, most importantly x.range.
@@ -112,6 +113,7 @@ plot_cnv <- function(infercnv_obj,
                      ref_contig = NULL,
                      write_expr_matrix=FALSE,
                      write_phylo=FALSE,
+                     write_members=FALSE,
                      useRaster=TRUE) {
 
 
@@ -408,6 +410,7 @@ plot_cnv <- function(infercnv_obj,
                           do_plot=!is.na(output_format),
                           write_expr_matrix=write_expr_matrix,
                           write_phylo=write_phylo,
+                          write_members=write_members,
                           output_filename_prefix=output_filename,
                           cluster_contig=ref_contig,
                           contigs=contigs,
@@ -487,6 +490,7 @@ plot_cnv <- function(infercnv_obj,
 #' @param file_base_name Base of the file to used to make output file names.
 #' @param do_plot If FALSE, only write text files and does not run plotting.
 #' @param write_expr_matrix Whether to write the matrix of observation values to file.
+#' @param write_members Whether to write the 'members' files.
 #' @param cnv_title Title of the plot.
 #' @param cnv_obs_title Title for the observation matrix.
 #' @param contig_lab_size Text size for contigs.
@@ -520,6 +524,7 @@ plot_cnv <- function(infercnv_obj,
                                   do_plot=TRUE,
                                   write_expr_matrix,
                                   write_phylo,
+                                  write_members,
                                   output_filename_prefix,
                                   cnv_title,
                                   cnv_obs_title,
@@ -674,7 +679,7 @@ plot_cnv <- function(infercnv_obj,
                 memb_file <- file(paste(file_base_name,
                                         paste(hcl_desc,"HCL",cut_group,"members.txt",sep="_"),
                                         sep=.Platform$file.sep))
-                write.table(as.matrix(obs_data[group_memb,]), memb_file)
+                if (write_members) write.table(as.matrix(obs_data[group_memb,]), memb_file)
                 # Record seperation
                 ordered_memb <- which(ordered_names %in% group_memb)
                 if (is.null(obs_seps)) {
@@ -776,7 +781,7 @@ plot_cnv <- function(infercnv_obj,
                 memb_file <- file(paste(file_base_name,
                                         paste(hcl_desc,"HCL",cut_group,"members.txt",sep="_"),
                                         sep=.Platform$file.sep))
-                write.table(as.matrix(obs_data[group_memb,]), memb_file)
+                if (write_members) write.table(as.matrix(obs_data[group_memb,]), memb_file)
                 # Record seperation
                 ordered_memb <- which(ordered_names %in% group_memb)
                 if (is.null(obs_seps)) {
