@@ -831,7 +831,7 @@ plot_cnv <- function(infercnv_obj,
             row_groupings[,2]=custom_colors[names(infercnv_obj@observation_grouped_cell_indices)[hcl_obs_annotations_groups]]
             if (all(as.character(annotations_legend[,1]) %in% names(custom_colors))) {
                 annotations_legend[,2]=custom_colors[as.character(annotations_legend[,1])]
-                annotations_legend=annotations_legend[mixedorder(as.character(annotations_legend[,1])),]
+                annotations_legend=annotations_legend[mixedorder(as.character(annotations_legend[,1])), , drop=FALSE]
             } else {
                 print(custom_colors)
                 print(annotations_legend)
