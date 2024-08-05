@@ -186,6 +186,8 @@
 #' @param plot_probabilities option to plot posterior probabilities (default: TRUE)
 #'
 #' @param save_rds Whether to save the current step object results as an .rds file (default: TRUE)
+#' 
+#' @param save_expr_cluster_rds Whether to save the expression data (before denoising) used for clustering as an .rds file (default: TRUE)
 #'
 #' @param save_final_rds Whether to save the final object results as an .rds file (default: TRUE)
 #'
@@ -327,6 +329,7 @@ run <- function(infercnv_obj,
                 plot_probabilities = TRUE,
                 save_rds = TRUE,
                 save_final_rds = TRUE,
+                save_expr_cluster_rds = TRUE,
                 diagnostics = FALSE,
 
                 ## experimental options
@@ -1108,6 +1111,9 @@ run <- function(infercnv_obj,
                                                    )
 
             infercnv_obj = res[[1]]
+            if (save_expr_cluster_rds) {
+                saveRDS(infercnv_obj@expr.data, paste0(out_dir, "/", "expr_cluster.rds"))
+            }
             subclusters_per_chr = res[[2]]
             rm(res)
 
@@ -1163,6 +1169,9 @@ run <- function(infercnv_obj,
                                                             z_score_filter=z_score_filter
                                                             )[[1]]
             
+            if (save_expr_cluster_rds) {
+                saveRDS(infercnv_obj@expr.data, paste0(out_dir, "/", "expr_cluster.rds"))
+            }
             if (save_rds) {
                 saveRDS(infercnv_obj, reload_info$expected_file_names[[step_count]])
             }

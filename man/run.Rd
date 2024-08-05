@@ -63,6 +63,7 @@ run(
   plot_probabilities = TRUE,
   save_rds = TRUE,
   save_final_rds = TRUE,
+  save_expr_cluster_rds = TRUE,
   diagnostics = FALSE,
   remove_genes_at_chr_ends = FALSE,
   prune_outliers = FALSE,
@@ -252,6 +253,8 @@ Will preferentially use outlier_lower_bounda and outlier_upper_bound if set.}
 \item{save_rds}{Whether to save the current step object results as an .rds file (default: TRUE)}
 
 \item{save_final_rds}{Whether to save the final object results as an .rds file (default: TRUE)}
+
+\item{save_expr_cluster_rds}{Whether to save the expression data (before denoising) used for clustering as an .rds file (default: TRUE)}
 
 \item{diagnostics}{option to create diagnostic plots after running the Bayesian model (default: FALSE)
 
