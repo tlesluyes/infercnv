@@ -5,8 +5,16 @@
 #
 # Returns:
 # Color Palette
-get_group_color_palette <- function(){
+get_contig_color_palette <- function(){
     return(colorRampPalette(RColorBrewer::brewer.pal(12,"Set3")))
+}
+
+# Returns the color palette for groups
+#
+# Returns:
+# Color Palette
+get_group_color_palette <- function(){
+    return(colorRampPalette(RColorBrewer::brewer.pal(12,"Set1")))
 }
 
 
@@ -193,7 +201,7 @@ plot_cnv <- function(infercnv_obj,
     contigs = infercnv_obj@gene_order[[C_CHR]]
     unique_contigs <- unique(contigs)
     n_contig <- length(unique_contigs)
-    ct.colors <- get_group_color_palette()(n_contig)
+    ct.colors <- get_contig_color_palette()(n_contig)
     names(ct.colors) <- unique_contigs
 
     # Select color palette
