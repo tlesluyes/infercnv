@@ -17,6 +17,37 @@ get_group_color_palette <- function(){
     return(colorRampPalette(RColorBrewer::brewer.pal(12,"Set1")))
 }
 
+# Hacks the group colors to only show clusters representing >=1% of tumour cells
+hack_group_colors <- function(row_groupings, annotations_legend, group_column){
+    blacklist <- names(which(table(row_groupings[, group_column])/nrow(row_groupings)<0.01))
+    if (length(blacklist) > 0) {
+        if (group_column == 1) {
+            annotations_legend <- cbind(paste0("I", 1:length(unique(row_groupings[, group_column]))), unique(row_groupings[, group_column]))
+        }
+        rownames(annotations_legend) <- annotations_legend[, 2]
+        row_groupings <- cbind(row_groupings, annotations_legend[row_groupings[, group_column], 1])
+        row_groupings[row_groupings[, group_column] %in% blacklist, group_column] <- "black"
+        new.colors <- get_group_color_palette()(length(setdiff(unique(row_groupings[, group_column]), "black")))
+        for (i in unique(row_groupings[, 3])){
+            index <- which(row_groupings[, 3] == i)
+            stopifnot(length(unique(row_groupings[index, group_column])) == 1)
+            if (row_groupings[index[1], group_column] != "black") {
+                row_groupings[index, group_column] <- new.colors[1]
+                new.colors <- new.colors[-1]
+            }
+            rm(index)
+        }; rm(i)
+        stopifnot(length(new.colors) == 0)
+        rm(new.colors)
+        annotations_legend <- unique(row_groupings[, c(3, group_column)])
+        rownames(annotations_legend) <- NULL
+        row_groupings <- row_groupings[, c(1, 2)]
+        rownames(row_groupings) <- NULL
+    }
+    rm(blacklist)
+    return(list(row_groupings=row_groupings, annotations_legend=annotations_legend))
+}
+
 
 #' @description Formats the data and sends it for plotting.
 #'
@@ -834,12 +865,17 @@ plot_cnv <- function(infercnv_obj,
     row_groupings <- cbind(row_groupings, get_group_color_palette()(length(table(hcl_obs_annotations_groups)))[hcl_obs_annotations_groups])
     annotations_legend <- cbind(obs_annotations_names, get_group_color_palette()(length(table(hcl_obs_annotations_groups))))
 
+    annotations_legend[,1] <- gsub("^all_observations_s", "I", annotations_legend[,1])
+
     if (!is.null(custom_colors)) {
         if (all(names(infercnv_obj@observation_grouped_cell_indices) %in% names(custom_colors))) {
             row_groupings[,2]=custom_colors[names(infercnv_obj@observation_grouped_cell_indices)[hcl_obs_annotations_groups]]
             if (all(as.character(annotations_legend[,1]) %in% names(custom_colors))) {
                 annotations_legend[,2]=custom_colors[as.character(annotations_legend[,1])]
                 annotations_legend=annotations_legend[mixedorder(as.character(annotations_legend[,1])), , drop=FALSE]
+                out <- hack_group_colors(row_groupings, annotations_legend, 1)
+                row_groupings <- out$row_groupings
+                rm(out)
             } else {
                 print(custom_colors)
                 print(annotations_legend)
@@ -851,6 +887,11 @@ plot_cnv <- function(infercnv_obj,
             print(table(names(infercnv_obj@observation_grouped_cell_indices)))
             stop("Error with infercnv_obj@observation_grouped_cell_indices")
         }
+    } else {
+        out <- hack_group_colors(row_groupings, annotations_legend, 2)
+        annotations_legend <- out$annotations_legend
+        row_groupings <- out$row_groupings
+        rm(out)
     }
 
     # Make a file of coloring and groupings
