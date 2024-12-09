@@ -19,9 +19,13 @@ get_group_color_palette <- function(){
 
 # Hacks the group colors to only show clusters representing >=1% of tumour cells
 hack_group_colors <- function(row_groupings, annotations_legend, group_column){
+    #save(row_groupings, annotations_legend, group_column, file="debug.Rdata")
     blacklist <- names(which(table(row_groupings[, group_column])/nrow(row_groupings)<0.01))
     if (length(blacklist) > 0) {
         if (group_column == 1) {
+            if (any(is.na(row_groupings[, group_column]))) {
+                row_groupings[is.na(row_groupings[, group_column]), ] <- "black"
+            }
             annotations_legend <- cbind(paste0("I", 1:length(unique(row_groupings[, group_column]))), unique(row_groupings[, group_column]))
         }
         rownames(annotations_legend) <- annotations_legend[, 2]
@@ -925,6 +929,9 @@ plot_cnv <- function(infercnv_obj,
     flog.info("plot_cnv_observation:Done writing observation heatmap thresholds.")
 
     if (do_plot) {
+        #save(obs_data, obs_dendrogram, cnv_title, cnv_obs_title, contig_labels, contig_lab_size, contig_seps, breaksList,
+        #     gene_position_breaks, x.center, col_pal, testing, contigSepList, row_groupings, annotations_legend, grouping_key_coln,
+        #     contig_colors, layout_lmat, layout_lwid, layout_lhei, useRaster, file="debug_heatmap.cnv.Rdata")
         data_observations <- heatmap.cnv(obs_data,
                                         Rowv=obs_dendrogram,
                                         Colv=FALSE,

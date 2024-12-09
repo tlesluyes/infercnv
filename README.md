@@ -16,3 +16,5 @@ Visit project [wiki](https://github.com/broadinstitute/inferCNV/wiki) for InferC
 - 2024/09/05:
   - Change the color scheme.
   - Tiny clusters (<1% of all tumor cells) are set to black, allowing other clusters to have distinct colors
+- 2024/12/09:
+  - Fix a rare issue where some cells seem unassigned to a cluster in `row_groupings` (are `NA`)
